@@ -10,7 +10,11 @@ git clone https://github.com/lasseignelab/lab-cli.git
 . lab-cli/install.sh
 source ~/.bash_profile
 ```
-
+# Update
+```
+cd $USER_HOME/bin/lab-cli
+git pull origin main
+```
 # Usage
 The `lab` CLI provides commands to help with reproducible research.
 ```
