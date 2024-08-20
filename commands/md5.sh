@@ -1,11 +1,16 @@
 #!/bin/bash
 
-md5_description=$(cat <<EOF
+md5_description() {
+  cat <<EOF
   md5 - Calculates a combined MD5 checksum for one or more files.
 EOF
-)
+}
 
-md5_help=$(cat <<EOF
+md5_help() {
+  md5_description
+  echo
+
+  cat <<EOF
   The "md5" command produces a combined MD5 checksum for all the files
   specified.  It will show a list of all files included to ensure that the
   result is as expected.
@@ -27,9 +32,8 @@ md5_help=$(cat <<EOF
 
     Combined MD5 checksum:
     a225199964b84bdeef33bafe3df7c10b
-
 EOF
-)
+}
 
 md5() {
   echo -e '\nFiles included:'
