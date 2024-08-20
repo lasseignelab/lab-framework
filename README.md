@@ -21,15 +21,25 @@ The `lab` CLI provides commands to help with reproducible research.
 lab <command> params...
 ```
 
-## md5dir
-The `lab md5dir` command will produce an md5sum for all the contents of a directory.  This makes it easy to determine whether the contents of one directory are identical to another.
+## md5
+The `lab md5` command will produce an md5sum for the file or files specified.
+This makes it easy to determine whether files are identical.
 
 Definition:
 ```
-lab md5dir <directory>
+lab md5 FILE...
 ```
 Example:
 ```
-lab md5dir ./
-e0313390b2418cb38cb5a4a03d993e0b
+$ lab md5 *
+
+Files included:
+43bd364a97a38fb1da7c57e6381886c1  lab-cli/LICENSE
+b794df25f796ac80680c0e4d27308bce  lab-cli/commands/md5.sh
+0d9281c3586c420130bcb5d25c8a151a  lab-cli/lab
+5e79c988140af1b7bd5735b0bf96306b  lab-cli/README.md
+783a44ffae97afbce3f1649c5ff517a5  lab-cli/install.sh
+
+Combined MD5 checksum:
+a225199964b84bdeef33bafe3df7c10b
 ```
