@@ -6,14 +6,15 @@ A framework and command line interface (CLI) for computational lab work.
 cd $USER_HOME
 mkdir bin
 cd bin
-git clone https://github.com/lasseignelab/lab-framework.git
+git clone --recursive-submodules https://github.com/lasseignelab/lab-framework.git
 . lab-framework/install.sh
 source ~/.bash_profile
 ```
 # Update
 ```
 cd $USER_HOME/bin/lab-framework
-git pull origin main
+git pull
+git submodule update --recursive --remote
 ```
 # Usage
 The `lab` CLI provides commands to help with reproducible research.
