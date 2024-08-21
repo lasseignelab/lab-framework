@@ -64,7 +64,7 @@ EOF
           # Call the function
           "$description_function"
         else
-          echo "Function $description_function not found in $script"
+          echo "    Error:  Function $description_function not found in $script"
         fi
       done
     } | column -t -s ':'
