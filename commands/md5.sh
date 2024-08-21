@@ -2,7 +2,7 @@
 
 md5_description() {
   cat <<EOF
-  md5 - Calculates a combined MD5 checksum for one or more files.
+  Calculates a combined MD5 checksum for one or more files.
 EOF
 }
 
@@ -40,6 +40,7 @@ md5() {
   md5_find "${@:1}"
   echo -e '\nCombined MD5 checksum:'
   md5_find "${@:1}" | cut -d ' ' -f1 | sort | md5sum | cut -d ' ' -f1
+  echo
 }
 
 ###############################################################################

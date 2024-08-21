@@ -10,7 +10,7 @@ done
 
 # Check if a parameter was provided
 if [ "$#" -eq 0 ]; then
-    echo "Usage: $0 <command>"
+    help
     exit 1
 fi
 
