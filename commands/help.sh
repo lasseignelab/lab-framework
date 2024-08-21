@@ -59,7 +59,7 @@ EOF
 
         # Check if the function exists
         if declare -f "$description_function" > /dev/null; then
-          printf '    '$script_name':'
+          printf '    %s:' "$script_name"
 
           # Call the function
           "$description_function"
