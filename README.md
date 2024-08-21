@@ -1,18 +1,18 @@
-# lab-cli
-A command line interface for computational lab work.
+# lab-framework
+A framework and command line interface (CLI) for computational lab work.
 
 # Installation
 ```
 cd $USER_HOME
 mkdir bin
 cd bin
-git clone https://github.com/lasseignelab/lab-cli.git
-. lab-cli/install.sh
+git clone https://github.com/lasseignelab/lab-framework.git
+. lab-framework/install.sh
 source ~/.bash_profile
 ```
 # Update
 ```
-cd $USER_HOME/bin/lab-cli
+cd $USER_HOME/bin/lab-framework
 git pull origin main
 ```
 # Usage
@@ -54,11 +54,11 @@ $ lab help md5
     $ lab md5 *
 
     Files included:
-    43bd364a97a38fb1da7c57e6381886c1  lab-cli/LICENSE
-    b794df25f796ac80680c0e4d27308bce  lab-cli/commands/md5.sh
-    0d9281c3586c420130bcb5d25c8a151a  lab-cli/lab
-    5e79c988140af1b7bd5735b0bf96306b  lab-cli/README.md
-    783a44ffae97afbce3f1649c5ff517a5  lab-cli/install.sh
+    43bd364a97a38fb1da7c57e6381886c1  lab-framework/LICENSE
+    b794df25f796ac80680c0e4d27308bce  lab-framework/commands/md5.sh
+    0d9281c3586c420130bcb5d25c8a151a  lab-framework/lab
+    5e79c988140af1b7bd5735b0bf96306b  lab-framework/README.md
+    783a44ffae97afbce3f1649c5ff517a5  lab-framework/install.sh
 
     Combined MD5 checksum:
     a225199964b84bdeef33bafe3df7c10b
@@ -77,11 +77,11 @@ Example:
 $ lab md5 *
 
 Files included:
-43bd364a97a38fb1da7c57e6381886c1  lab-cli/LICENSE
-b794df25f796ac80680c0e4d27308bce  lab-cli/commands/md5.sh
-0d9281c3586c420130bcb5d25c8a151a  lab-cli/lab
-5e79c988140af1b7bd5735b0bf96306b  lab-cli/README.md
-783a44ffae97afbce3f1649c5ff517a5  lab-cli/install.sh
+43bd364a97a38fb1da7c57e6381886c1  lab-framework/LICENSE
+b794df25f796ac80680c0e4d27308bce  lab-framework/commands/md5.sh
+0d9281c3586c420130bcb5d25c8a151a  lab-framework/lab
+5e79c988140af1b7bd5735b0bf96306b  lab-framework/README.md
+783a44ffae97afbce3f1649c5ff517a5  lab-framework/install.sh
 
 Combined MD5 checksum:
 a225199964b84bdeef33bafe3df7c10b
