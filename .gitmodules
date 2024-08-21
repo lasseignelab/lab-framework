@@ -1,0 +1,3 @@
+[submodule "project-template"]
+	path = project-template
+	url = git@github.com:lasseignelab/project-template.git
