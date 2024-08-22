@@ -87,3 +87,30 @@ b794df25f796ac80680c0e4d27308bce  lab-framework/commands/md5.sh
 Combined MD5 checksum:
 a225199964b84bdeef33bafe3df7c10b
 ```
+
+## new
+The `lab new` command will create a new research project based on the
+project-template submodule in the lab-framework repository.  The project
+repository will be created with the origin remote pointed to a Github
+repository owner specified by the Github account and project name parameters.
+
+Definition:
+```
+lab new GITHUB_ACCOUNT PROJECT_NAME
+```
+Example:
+```
+$ lab new lasseignelab PKD_Expression_CxG
+
+Cloning into 'PKD_Expression_CxG'...
+done.
+
+Create a repository for 'PKD_Expression_CxG' on GitHub by visiting:
+  https://github.com/organizations/lasseignelab/repositories/new
+
+Once the Github repository has been created, run the following commands:
+  cd PKD_Expression_CxG
+  git push origin main
+
+Happy researching!!!
+```
