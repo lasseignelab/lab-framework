@@ -36,10 +36,14 @@ EOF
 }
 
 md5() {
+  # Compute checksums for all files
   echo -e '\nFiles included:'
-  md5_find "${@:1}"
+  checksums=$(md5_find "${@:1}")
+  echo "$checksums"
+
+  # Compute single checksum based on the checksums of all files
   echo -e '\nCombined MD5 checksum:'
-  md5_find "${@:1}" | cut -d ' ' -f1 | sort | md5sum | cut -d ' ' -f1
+  echo "$checksums" | cut -d ' ' -f1 | sort | md5sum | cut -d ' ' -f1
   echo
 }
 
