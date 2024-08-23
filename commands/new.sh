@@ -22,10 +22,29 @@ new_help() {
     PROJECT_NAME   Name of the project which will match the Github repo name.
 
   Example:
-    $ lab new lasseignelab PkdFnd_CrossSpecies
+    $ lab new lasseignelab PKD_Expression_CxG
 
-    Create a repository for 'PkdFnd_CrossSpecies' on GitHub by visiting:
+    Cloning into 'PKD_Expression_CxG'...
+    done.
+
+    Create an empty repository for 'PKD_Expression_CxG' on GitHub by using the
+    following link and settings:
+
       https://github.com/organizations/lasseignelab/repositories/new
+
+      * No template
+      * Owner 'lasseignelab'
+      * Private
+      * No READEME file
+      * No .gitignore
+      * No license
+
+    Once the Github repository has been created, run the following commands to
+    upload the new project to Github:
+      cd PKD_Expression_CxG
+      git push origin main
+
+    Happy researching!!!
 EOF
 }
 
@@ -44,27 +63,40 @@ new() {
 
   # If the project doesn't exist then create it.
   if [ -d "$project_name" ]; then
-    echo "The directory '$project_name' already exists."
+    echo "Error: The directory '$project_name' already exists."
     exit 1
   fi
-
   echo
   git clone "$installed_directory"/project-template "$project_name"
-  cd "$project_name" || echo "Error: Project folder does not exist"; exit
-  git remote remove origin
-  git remote add origin git@github.com:lasseignelab/"$project_name".git
 
-  echo
-  cat <<EOF
-Create a repository for '$project_name' on GitHub by visiting:
+  # If the project template clone succeeded then configure the repo.
+  cd "$project_name" || echo "Error: Directory '$project_name' does not exist."
+  if [ -d ".git" ]; then
+    git remote remove origin
+    git remote add origin git@github.com:lasseignelab/"$project_name".git
+
+    echo
+    cat <<EOF
+Create an empty repository for '$project_name' on GitHub by using the
+following link and settings:
+
   https://github.com/organizations/$github_account/repositories/new
 
-Once the Github repository has been created, run the following commands:
+  * No template
+  * Owner '$github_account'
+  * Private
+  * No READEME file
+  * No .gitignore
+  * No license
+
+Once the Github repository has been created, run the following commands to
+upload the new project to Github:
   cd $project_name
   git push origin main
 
 Happy researching!!!
 
 EOF
+  fi
 }
 
