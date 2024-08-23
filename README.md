@@ -100,16 +100,27 @@ lab new GITHUB_ACCOUNT PROJECT_NAME
 ```
 Example:
 ```
-$ lab new lasseignelab PKD_Expression_CxG
+$ lab new lasseignelab PKD_Research
 
-Cloning into 'PKD_Expression_CxG'...
+Cloning into 'PKD_Research'...
 done.
 
-Create a repository for 'PKD_Expression_CxG' on GitHub by visiting:
+Create an empty repository for 'PKD_Research' on GitHub by using the
+following link and settings:
+
   https://github.com/organizations/lasseignelab/repositories/new
 
-Once the Github repository has been created, run the following commands:
-  cd PKD_Expression_CxG
+  * No template
+  * Owner: lasseignelab
+  * Repository name: PKD_Research
+  * Private
+  * No READEME file
+  * No .gitignore
+  * No license
+
+Once the Github repository has been created, run the following commands to
+upload the new project to Github:
+  cd PKD_Research
   git push origin main
 
 Happy researching!!!
