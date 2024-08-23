@@ -117,7 +117,7 @@ following link and settings:
   * Owner: lasseignelab
   * Repository name: PKD_Research
   * Private
-  * No READEME file
+  * No README file
   * No .gitignore
   * No license
 
