@@ -50,7 +50,7 @@ new() {
 
   echo
   git clone "$installed_directory"/project-template "$project_name"
-  cd "$project_name"
+  cd "$project_name" || echo "Error: Project folder does not exist"; exit
   git remote remove origin
   git remote add origin git@github.com:lasseignelab/"$project_name".git
 
