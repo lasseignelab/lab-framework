@@ -24,9 +24,6 @@ new_help() {
   Example:
     $ lab new lasseignelab PKD_Research
 
-    Cloning into 'PKD_Research'...
-    done.
-
     Create an empty repository for 'PKD_Research' on GitHub by using the
     following link and settings:
 
@@ -36,14 +33,17 @@ new_help() {
       * Owner: lasseignelab
       * Repository name: PKD_Research
       * Private
-      * No READEME file
+      * No README file
       * No .gitignore
       * No license
 
-    Once the Github repository has been created, run the following commands to
-    upload the new project to Github:
-      cd PKD_Research
-      git push origin main
+    Where you able to create a repository (y/N)? y
+
+
+    Cloning into 'PKD_Research'...
+    done.
+
+    ...
 
     Happy researching!!!
 EOF
@@ -59,25 +59,18 @@ new() {
   github_account=$1
   project_name=$2
 
-  # Find the lab framework installion directory.
-  installed_directory=$(dirname "$(command -v lab)")
-
-  # If the project doesn't exist then create it.
+  # If the project directory exists then abort.
   if [ -d "$project_name" ]; then
     echo "Error: The directory '$project_name' already exists."
     exit 1
   fi
-  echo
-  git clone "$installed_directory"/project-template "$project_name"
 
-  # If the project template clone succeeded then configure the repo.
-  cd "$project_name" || echo "Error: Directory '$project_name' does not exist."
-  if [ -d ".git" ]; then
-    git remote remove origin
-    git remote add origin git@github.com:lasseignelab/"$project_name".git
+  # Find the lab framework installion directory.
+  installed_directory=$(dirname "$(command -v lab)")
 
-    echo
-    cat <<EOF
+  # Prompt the researcher to create a repository on Github
+  cat <<EOF
+
 Create an empty repository for '$project_name' on GitHub by using the
 following link and settings:
 
@@ -87,18 +80,38 @@ following link and settings:
   * Owner: $github_account
   * Repository name: $project_name
   * Private
-  * No READEME file
+  * No README file
   * No .gitignore
   * No license
 
-Once the Github repository has been created, run the following commands to
-upload the new project to Github:
-  cd $project_name
-  git push origin main
-
-Happy researching!!!
-
 EOF
+
+  echo -n "Where you able to create a repository (y/N)? "
+  read -r response
+  response=${response,,}
+  echo
+  if [[ "$response" != "y" ]]; then
+    echo "New project creation aborted."
+    echo
+    exit 0
+  fi
+
+  # Clone, configure, and push the project.
+  echo
+  git clone "$installed_directory"/project-template "$project_name"
+  cd "$project_name" || echo "Error: Directory '$project_name' does not exist."
+  if [ -d ".git" ]; then
+    rm -rf .git
+    git init
+    git remote add origin git@github.com:"$github_account"/"$project_name".git
+    git add .
+    git commit -m "Initial commit"
+    git branch -m master main
+    git push origin main
+
+    echo
+    echo "Happy researching!!!"
+    echo
   fi
 }
 

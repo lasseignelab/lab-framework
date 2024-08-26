@@ -105,9 +105,6 @@ Example:
 ```
 $ lab new lasseignelab PKD_Research
 
-Cloning into 'PKD_Research'...
-done.
-
 Create an empty repository for 'PKD_Research' on GitHub by using the
 following link and settings:
 
@@ -121,10 +118,13 @@ following link and settings:
   * No .gitignore
   * No license
 
-Once the Github repository has been created, run the following commands to
-upload the new project to Github:
-  cd PKD_Research
-  git push origin main
+Where you able to create a repository (y/N)? y
+
+
+Cloning into 'PKD_Research'...
+done.
+
+...
 
 Happy researching!!!
 ```
