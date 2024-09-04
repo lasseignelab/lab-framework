@@ -96,10 +96,11 @@ repository owner specified by the Github account and project name parameters.
 
 Definition:
 ```
-lab new GITHUB_ACCOUNT PROJECT_NAME
+lab new GITHUB_OWNER PROJECT_NAME
 
-GITHUB_ACCOUNT Github account the project repo will be created under.
-PROJECT_NAME   Name of the project which will match the Github repo name.
+GITHUB_OWNER Github owner the project repo will be created under.  This may
+             be a personal or organization account.
+PROJECT_NAME Name of the project which will match the Github repo name.
 ```
 Example:
 ```
