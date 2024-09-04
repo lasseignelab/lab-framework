@@ -13,13 +13,14 @@ new_help() {
   cat <<EOF
   The "new" command produces a new reproducible research project based on
   a project template that adheres to a set of conventions.  The conventions
-  include a directory structure, Github actions, stubbed out files.
+  include a directory structure, Github actions, and stubbed out files.
 
   Usage:
-    lab new GITHUB_ACCOUNT PROJECT_NAME
+    lab new GITHUB_OWNER PROJECT_NAME
 
-    GITHUB_ACCOUNT Github account the project repo will be created under.
-    PROJECT_NAME   Name of the project which will match the Github repo name.
+    GITHUB_OWNER Github owner the project repo will be created under.  This may
+                 be a personal or organization account.
+    PROJECT_NAME Name of the project which will match the Github repo name.
 
   Example:
     $ lab new lasseignelab PKD_Research
@@ -53,7 +54,8 @@ new() {
   # Check that both parameters were passed
   if [ "$#" -ne 2 ]; then
     echo "Error: incorrect number of parameters"
-    echo "Usage: lab new GITHUB_ACCOUNT PROJECT_NAME"
+    echo "Usage: lab new GITHUB_OWNER PROJECT_NAME"
+    echo "Use the 'lab help new' command for detailed help."
     return 1
   fi
   github_account=$1
@@ -62,7 +64,28 @@ new() {
   # If the project directory exists then abort.
   if [ -d "$project_name" ]; then
     echo "Error: The directory '$project_name' already exists."
-    exit 1
+    return 1
+  fi
+
+  # If Github SSH is not configured then abort.
+  if ! ssh -T git@github.com 2>&1 | grep -q 'successfully authenticated'; then
+    github_docs="https://docs.github.com/en"
+    github_ssh_docs="$github_docs/authentication/connecting-to-github-with-ssh"
+    cat <<EOF
+
+Github SSH is not configured or there's an issue. Please configure SSH keys
+for Github before proceeding.
+
+To setup SSH for connecting to Github do the following steps:
+  1) Check for existing SSH keys:
+     $github_ssh_docs/checking-for-existing-ssh-keys
+  2) If no key exists, generate a new SSH key:
+     $github_ssh_docs/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+  3) Add a new SSH key to your github user account:
+     $github_ssh_docs/adding-a-new-ssh-key-to-your-github-account
+
+EOF
+    return 1
   fi
 
   # Find the lab framework installion directory.
@@ -93,7 +116,7 @@ EOF
   if [[ "$response" != "y" ]]; then
     echo "New project creation aborted."
     echo
-    exit 0
+    return 0
   fi
 
   # Clone, configure, and push the project.
