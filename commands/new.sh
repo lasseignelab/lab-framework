@@ -58,7 +58,7 @@ new() {
     echo "Use the 'lab help new' command for detailed help."
     return 1
   fi
-  github_account=$1
+  github_owner=$1
   project_name=$2
 
   # If the project directory exists then abort.
@@ -97,10 +97,10 @@ EOF
 Create an empty repository for '$project_name' on GitHub by using the
 following link and settings:
 
-  https://github.com/organizations/$github_account/repositories/new
+  https://github.com/organizations/$github_owner/repositories/new
 
   * No template
-  * Owner: $github_account
+  * Owner: $github_owner
   * Repository name: $project_name
   * Private
   * No README file
@@ -126,7 +126,7 @@ EOF
   if [ -d ".git" ]; then
     rm -rf .git
     git init
-    git remote add origin git@github.com:"$github_account"/"$project_name".git
+    git remote add origin git@github.com:"$github_owner"/"$project_name".git
     git add .
     git commit -m "Initial commit"
     git branch -m master main
