@@ -44,9 +44,8 @@ EOF
 }
 
 md5() {
-    # Define the named commandline options
-  OPTIONS=$(getopt -o s: --long slurm: -- "$@")
-  if [ "$?" -ne 0 ]; then
+  # Define the named commandline options
+  if ! OPTIONS=$(getopt -o s: --long slurm: -- "$@"); then
     echo "Use the 'lab help md5' command for detailed help."
     return 1
   fi
