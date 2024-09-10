@@ -16,9 +16,17 @@ md5_help() {
   result is as expected.
 
   Usage:
-    lab md5 FILE...
+    lab md5 [options] FILE...
 
     FILE... can be one or more file and/or directory specifications.
+
+    Options:
+
+    --slurm=[batch|run]
+            Runs the md5 command as a Slurm job. If the value is run then
+            srun is used and the output stays connected to the current
+            terminal session.  If the value is batch then sbatch is used and
+            the output is written to lab-md5-<job_id>.out
 
   Example:
     $ lab md5 *
@@ -36,15 +44,75 @@ EOF
 }
 
 md5() {
-  # Compute checksums for all files
-  echo -e '\nFiles included:'
-  checksums=$(md5_find "${@:1}")
-  echo "$checksums"
+    # Define the named commandline options
+  OPTIONS=$(getopt -o s: --long slurm: -- "$@")
+  if [ "$?" -ne 0 ]; then
+    echo "Use the 'lab help md5' command for detailed help."
+    return 1
+  fi
+  eval set -- "$OPTIONS"
 
-  # Compute single checksum based on the checksums of all files
-  echo -e '\nCombined MD5 checksum:'
-  echo "$checksums" | cut -d ' ' -f1 | md5sum | cut -d ' ' -f1
-  echo
+  # Set default values for the named parameters
+  slurm=""
+
+  # Parse the optional named command line options
+  while true; do
+    case "$1" in
+      -s|--slurm)
+        slurm="$2"
+        shift 2 ;;
+      --)
+        shift
+        break;;
+    esac
+  done
+
+  # Validate the slurm option value
+  if [[ "$slurm" != "batch" && "$slurm" != "run" && "$slurm" != "" ]]; then
+    echo "Error: invalid value for --slurm option"
+    echo "Use the 'lab help md5' command for detailed help."
+    exit 1
+  fi
+
+  # Submit to slurm or run immediately
+  case "$slurm" in
+    batch)
+      current_path=$(pwd)
+      sbatch <<EOF
+#!/bin/bash
+
+#################################### SLURM ####################################
+#SBATCH --job-name lab-md5
+#SBATCH --output lab-md5-%j.out
+#SBATCH --error lab-md5-%j.out
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=32G
+#SBATCH --partition=short
+echo "Ran from: $current_path"
+lab md5 ${@:1}
+EOF
+      ;;
+    run)
+      srun \
+        --job-name=lab-md5 \
+        --ntasks=1 \
+        --cpus-per-task=1 \
+        --mem=32G \
+        bash -c 'lab md5 "$@"' _ "${@}"
+      ;;
+    *)
+      # Compute checksums for all files
+      echo -e '\nFiles included:'
+      checksums=$(md5_find "${@:1}")
+      echo "$checksums"
+
+      # Compute single checksum based on the checksums of all files
+      echo -e '\nCombined MD5 checksum:'
+      echo "$checksums" | cut -d ' ' -f1 | md5sum | cut -d ' ' -f1
+      echo
+      ;;
+  esac
 }
 
 ###############################################################################
