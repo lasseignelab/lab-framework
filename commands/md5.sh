@@ -43,7 +43,7 @@ md5() {
 
   # Compute single checksum based on the checksums of all files
   echo -e '\nCombined MD5 checksum:'
-  echo "$checksums" | cut -d ' ' -f1 | sort | md5sum | cut -d ' ' -f1
+  echo "$checksums" | cut -d ' ' -f1 | md5sum | cut -d ' ' -f1
   echo
 }
 
@@ -60,5 +60,5 @@ md5() {
 #
 ###############################################################################
 md5_find() {
-  find "${@:1}" -type f ! -path '*/\.*' -exec md5sum {} +
+  find "${@:1}" -type f ! -path '*/\.*' -exec md5sum {} + | sort
 }
