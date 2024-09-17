@@ -27,6 +27,9 @@ md5_help() {
             verify the expected files are included.  This is helpful when
             the files are large and take a long time to process.
 
+    -o,--output=FILE
+            Specify an output file name to write the results to.
+
     --slurm=[batch|run]
             Runs the md5 command as a Slurm job. If the value is run then
             srun is used and the output stays connected to the current
@@ -50,7 +53,7 @@ EOF
 
 md5() {
   # Define the named commandline options
-  if ! OPTIONS=$(getopt -o ns: --long dry-run,slurm: -- "$@"); then
+  if ! OPTIONS=$(getopt -o no:s: --long dry-run,output:,slurm: -- "$@"); then
     echo "Use the 'lab help md5' command for detailed help."
     return 1
   fi
@@ -58,6 +61,7 @@ md5() {
 
   # Set default values for the named parameters
   dry_run=false
+  output_file=""
   slurm=""
 
   # Parse the optional named command line options
@@ -66,6 +70,9 @@ md5() {
       -n|--dry-run)
         dry_run=true
         shift 1 ;;
+      -o|--output)
+        output_file="$2"
+        shift 2 ;;
       -s|--slurm)
         slurm="$2"
         shift 2 ;;
@@ -91,19 +98,23 @@ md5() {
   case "$slurm" in
     batch)
       current_path=$(pwd)
+      if [[ "$output_file" == "" ]]; then
+        output_file='lab-md5-%j.out'
+      fi
       sbatch <<EOF
 #!/bin/bash
 
 #################################### SLURM ####################################
 #SBATCH --job-name lab-md5
-#SBATCH --output lab-md5-%j.out
-#SBATCH --error lab-md5-%j.out
+#SBATCH --output $output_file
+#SBATCH --error $output_file
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=32G
 #SBATCH --partition=short
-echo "Ran from: $current_path"
+
 lab md5 ${@:1}
+echo "Ran from: $current_path"
 EOF
       ;;
     run)
@@ -112,28 +123,32 @@ EOF
         --ntasks=1 \
         --cpus-per-task=1 \
         --mem=32G \
+        --output="${output_file:-/dev/stdout}" \
         bash -c 'lab md5 "$@"' _ "${@}"
       ;;
     *)
-      if [[ "$dry_run" == "true" ]]; then
-        find "${@:1}" -type f ! -path '*/\.*' | sort
-      else
-        # Compute checksums for all files
-        echo -e '\nFiles included:'
-        checksums=$(md5_find "${@:1}")
-        echo "$checksums"
+      {
+        if [[ "$dry_run" == "true" ]]; then
+          find "${@:1}" -type f ! -path '*/\.*' | sort
+        else
+          # Compute checksums for all files
+          echo -e '\nFiles included:'
+          checksums=$(md5_find "${@:1}")
+          echo "$checksums"
 
-        # Compute single checksum based on the checksums of all files
-        echo -e '\nCombined MD5 checksum:'
-        echo "$checksums" | cut -d ' ' -f1 | md5sum | cut -d ' ' -f1
-        echo
-      fi
+          # Compute single checksum based on the checksums of all files
+          echo -e '\nCombined MD5 checksum:'
+          echo "$checksums" | cut -d ' ' -f1 | md5sum | cut -d ' ' -f1
+          echo
+        fi
+      } > "${output_file:-/dev/stdout}"
       ;;
   esac
 }
 
 ###############################################################################
 # Finds all matching files and produces an MD5 checksum for each file.
+# Results are sorted by file path and name.
 #
 # Usage:
 # > md5_find FILE...
