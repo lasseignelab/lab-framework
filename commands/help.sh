@@ -74,7 +74,7 @@ EOF
     # Construct the function name
     help_function="${command_name}_help"
     # Call the function
-    "$help_function"
+    "$help_function" | less
   fi
   echo
 }

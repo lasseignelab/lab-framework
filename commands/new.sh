@@ -16,14 +16,25 @@ new_help() {
   include a directory structure, Github actions, and stubbed out files.
 
   Usage:
-    lab new GITHUB_OWNER PROJECT_NAME
+    lab new [options] PROJECT_NAME
 
-    GITHUB_OWNER Github owner the project repo will be created under.  This may
-                 be a personal or organization account.
-    PROJECT_NAME Name of the project which will match the Github repo name.
+    PROJECT_NAME Name of the project which will be used for the directory name.
+                 It should also match the git host repo name if one is used.
+
+    Options:
+
+    --git-host=<host-domain-name>
+               Git host for the repository used for creating git remotes.  The
+               default is "github.com".
+    -o,--owner=<owner-id>
+               Git host owner the project repo will be created under.  This may
+               be a personal or organization account.
+    --skip-git
+               Skip making the project a git repository in order to allow
+               the use of other source control software.
 
   Example:
-    $ lab new lasseignelab PKD_Research
+    $ lab new --owner lasseignelab PKD_Research
 
     Create an empty repository for 'PKD_Research' on GitHub by using the
     following link and settings:
@@ -51,15 +62,7 @@ EOF
 }
 
 new() {
-  # Check that both parameters were passed
-  if [ "$#" -ne 2 ]; then
-    echo "Error: incorrect number of parameters"
-    echo "Usage: lab new GITHUB_OWNER PROJECT_NAME"
-    echo "Use the 'lab help new' command for detailed help."
-    return 1
-  fi
-  github_owner=$1
-  project_name=$2
+  parse_commandline_parameters "$@"
 
   # If the project directory exists then abort.
   if [ -d "$project_name" ]; then
@@ -67,11 +70,148 @@ new() {
     return 1
   fi
 
+  if [[ "$skip_git" != "true" && -n "$owner" ]]; then
+    verify_git_ssh_configuration
+    create_git_host_repository
+  fi
+
+  # Find the lab framework installion directory.
+  installed_directory=$(dirname "$(command -v lab)")
+
+  # Clone, configure, and push the project.
+  echo
+  git clone "$installed_directory"/project-template "$project_name"
+  cd "$project_name" || echo "Error: Directory '$project_name' does not exist."
+  if [ -d ".git" ]; then
+    rm -rf .git
+    if [[ "$skip_git" == "true" ]]; then
+      rm -rf .github
+      rm .gitignore
+      rm logs/.gitignore
+    else
+      git init
+      git add .
+      git commit -m "Initial commit"
+      git branch -m master main
+      if [[ -n "$owner" ]]; then
+        git remote add origin git@"$git_host":"$owner"/"$project_name".git
+        git push origin main
+      fi
+    fi
+
+    echo
+    echo "Happy researching!!!"
+    echo
+  fi
+}
+
+create_git_host_repository() {
+  # Prompt the researcher to create a repository on their git host
+  case "$git_host" in
+    "github.com")
+      cat <<EOF
+
+Create an empty repository for '$project_name' on GitHub by using the
+following link and settings:
+
+  https://github.com/organizations/$owner/repositories/new
+
+  * No template
+  * Owner: $owner
+  * Repository name: $project_name
+  * Private
+  * No README file
+  * No .gitignore
+  * No license
+
+EOF
+      ;;
+    "gitlab.com")
+      cat <<EOF
+
+Create an empty repository for '$project_name' on GitLab by using the
+following link and settings:
+
+  https://gitlab.com/projects/new#blank_project
+
+  * Project name: $project_name
+  * Project URl group: $owner
+  * Project slug: $project_name
+  * No deployment target
+  * Private
+  * No README file
+
+EOF
+      ;;
+    *)
+      cat <<EOF
+
+Create an empty repository named $project_name at $git_host.
+
+EOF
+  esac
+
+  echo -n "Where you able to create a repository (y/N)? "
+  read -r response
+  response=${response,,}
+  echo
+  if [[ "$response" != "y" ]]; then
+    echo "New project creation aborted."
+    echo
+    exit 0
+  fi
+}
+
+parse_commandline_parameters() {
+  # Define the named commandline options
+  OPTIONS=$(getopt -o o: --long owner:,git-host:,skip-git -- "$@")
+  if [ "$?" -ne 0 ]; then
+    echo "Use the 'lab help new' command for detailed help."
+    exit 1
+  fi
+  eval set -- "$OPTIONS"
+
+  # Set default values for the named parameters
+  owner=""
+  git_host="github.com"
+  skip_git=false
+
+  # Parse the optional named command line options
+  while true; do
+    case "$1" in
+      -o|--owner)
+        owner="$2"
+        shift 2 ;;
+      --git-host)
+        git_host="$2"
+        shift 2 ;;
+      --skip-git)
+        skip_git=true
+        shift ;;
+      --)
+        shift
+        break;;
+    esac
+  done
+
+  # Check that the required project name parameter was provided
+  if [ "$#" -ne 1 ]; then
+    echo "Error: incorrect number of parameters"
+    echo "Usage: lab new [options] PROJECT_NAME"
+    echo "Use the 'lab help new' command for detailed help."
+    exit 1
+  fi
+  project_name=$1
+}
+
+verify_git_ssh_configuration() {
   # If Github SSH is not configured then abort.
-  if ! ssh -T git@github.com 2>&1 | grep -q 'successfully authenticated'; then
-    github_docs="https://docs.github.com/en"
-    github_ssh_docs="$github_docs/authentication/connecting-to-github-with-ssh"
-    cat <<EOF
+  if ssh -T git@"$git_host" 2>&1 | grep -q 'Permission denied'; then
+    case "$git_host" in
+      "github.com")
+        github_docs="https://docs.github.com/en"
+        github_ssh_docs="$github_docs/authentication/connecting-to-github-with-ssh"
+        cat <<EOF
 
 Github SSH is not configured or there's an issue. Please configure SSH keys
 for Github before proceeding.
@@ -85,56 +225,25 @@ To setup SSH for connecting to Github do the following steps:
      $github_ssh_docs/adding-a-new-ssh-key-to-your-github-account
 
 EOF
-    return 1
-  fi
+        ;;
+      "gitlab.com")
+        cat <<EOF
 
-  # Find the lab framework installion directory.
-  installed_directory=$(dirname "$(command -v lab)")
-
-  # Prompt the researcher to create a repository on Github
-  cat <<EOF
-
-Create an empty repository for '$project_name' on GitHub by using the
-following link and settings:
-
-  https://github.com/organizations/$github_owner/repositories/new
-
-  * No template
-  * Owner: $github_owner
-  * Repository name: $project_name
-  * Private
-  * No README file
-  * No .gitignore
-  * No license
+Gitlab SSH is not configured or there's an issue. Please configure SSH keys
+for Gitlab before proceeding.
 
 EOF
+        ;;
+      *)
+        cat <<EOF
 
-  echo -n "Where you able to create a repository (y/N)? "
-  read -r response
-  response=${response,,}
-  echo
-  if [[ "$response" != "y" ]]; then
-    echo "New project creation aborted."
-    echo
-    return 0
-  fi
+SSH for $git_host is not configured or there's an issue. Please configure SSH
+keys before proceeding.
 
-  # Clone, configure, and push the project.
-  echo
-  git clone "$installed_directory"/project-template "$project_name"
-  cd "$project_name" || echo "Error: Directory '$project_name' does not exist."
-  if [ -d ".git" ]; then
-    rm -rf .git
-    git init
-    git remote add origin git@github.com:"$github_owner"/"$project_name".git
-    git add .
-    git commit -m "Initial commit"
-    git branch -m master main
-    git push origin main
-
-    echo
-    echo "Happy researching!!!"
-    echo
+EOF
+        ;;
+    esac
+    exit 1
   fi
 }
 
