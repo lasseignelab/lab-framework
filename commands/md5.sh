@@ -82,8 +82,7 @@ md5() {
     exit 1
   fi
 
-  # Pass options to slurm
-  slurm_options=""
+  # Dry runs do not run as Slurm jobs
   if [[ "$dry_run" == "true" ]]; then
     slurm=""
   fi
