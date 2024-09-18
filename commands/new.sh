@@ -164,8 +164,8 @@ EOF
 
 parse_commandline_parameters() {
   # Define the named commandline options
-  OPTIONS=$(getopt -o o: --long owner:,git-host:,skip-git -- "$@")
-  if [ "$?" -ne 0 ]; then
+
+  if ! OPTIONS=$(getopt -o o: --long owner:,git-host:,skip-git -- "$@"); then
     echo "Use the 'lab help new' command for detailed help."
     exit 1
   fi
