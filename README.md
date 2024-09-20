@@ -3,18 +3,18 @@ A framework and command line interface (CLI) for computational lab work.
 
 # Installation
 ```
-cd $USER_HOME
-mkdir bin
+cd ~/
+mkdir -p bin
 cd bin
-git clone --recursive-submodules https://github.com/lasseignelab/lab-framework.git
+git clone --recurse-submodules https://github.com/lasseignelab/lab-framework.git
 . lab-framework/install.sh
-source ~/.bash_profile
+. ~/.bash_profile
 ```
 # Update
 ```
-cd $USER_HOME/bin/lab-framework
+cd ~/bin/lab-framework
 git pull
-git submodule update --recursive --remote
+git submodule update --init --recursive
 ```
 # Usage
 The `lab` CLI provides commands to help with reproducible research.
@@ -86,4 +86,46 @@ b794df25f796ac80680c0e4d27308bce  lab-framework/commands/md5.sh
 
 Combined MD5 checksum:
 a225199964b84bdeef33bafe3df7c10b
+```
+
+## new
+The `lab new` command will create a new research project based on the
+project-template submodule in the lab-framework repository.  The project
+repository will be created with the origin remote pointed to a Github
+repository owner specified by the Github account and project name parameters.
+
+Definition:
+```
+lab new GITHUB_OWNER PROJECT_NAME
+
+GITHUB_OWNER Github owner the project repo will be created under.  This may
+             be a personal or organization account.
+PROJECT_NAME Name of the project which will match the Github repo name.
+```
+Example:
+```
+$ lab new lasseignelab PKD_Research
+
+Create an empty repository for 'PKD_Research' on GitHub by using the
+following link and settings:
+
+  https://github.com/organizations/lasseignelab/repositories/new
+
+  * No template
+  * Owner: lasseignelab
+  * Repository name: PKD_Research
+  * Private
+  * No README file
+  * No .gitignore
+  * No license
+
+Where you able to create a repository (y/N)? y
+
+
+Cloning into 'PKD_Research'...
+done.
+
+...
+
+Happy researching!!!
 ```
