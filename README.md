@@ -129,3 +129,30 @@ done.
 
 Happy researching!!!
 ```
+## run
+The `lab run` command runs a lab framework job within the context of a
+reproducible research project.  It will configure the environment based
+on configuration defined by the current user.
+
+Definition:
+```
+lab run [options] FILE
+
+FILE  File name of the job to run.
+
+Options:
+
+-e,--environment
+           Specifies the environment to run jobs in.  Environments allow
+           different setups for a pipeline.  For instance, a pipeline may
+           use internal copies of data during development but download that
+           data when the pipeline is ran in a different environment.
+-n,--dry-run
+           Displays the contents of the job to run along with the context
+           it will run in.
+```
+Example:
+```
+$ lab run src/01_download.sh
+Submitted batch job 29818073
+```

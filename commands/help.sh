@@ -1,13 +1,13 @@
 #!/bin/bash
 
-help_description() {
+lab_help_description() {
   cat <<EOF
   Shows help for the lab command line tool.
 EOF
 }
 
-help_help() {
-  help_description
+lab_help_help() {
+  lab_help_description
   echo
 
   cat <<EOF
@@ -31,7 +31,7 @@ help_help() {
 EOF
 }
 
-help() {
+lab_help() {
   echo
 
   # Check if a parameter was provided
@@ -55,7 +55,7 @@ EOF
         script_name=$(basename "$script" .sh)
 
         # Construct the function name
-        description_function="${script_name}_description"
+        description_function="lab_${script_name}_description"
 
         # Check if the function exists
         if declare -f "$description_function" > /dev/null; then
@@ -72,9 +72,9 @@ EOF
     # Retrieve the command name from the first parameter
     command_name=$1
     # Construct the function name
-    help_function="${command_name}_help"
+    help_function="lab_${command_name}_help"
     # Call the function
-    "$help_function" | less
+    "$help_function" | less -FX
   fi
   echo
 }
