@@ -43,7 +43,8 @@ LAB_PROJECT_PATH=$(realpath ".")
 
 # Bootstrap the framework runtime environment.
 if [ -f "$LAB_PROJECT_PATH/config/pipeline.sh" ]; then
-  source "$LAB_PROJECT_PATH/config/pipeline.sh" # shellcheck disable=SC1091
+  # shellcheck disable=SC1091
+  source "$LAB_PROJECT_PATH/config/pipeline.sh"
 fi
 
 # Set all the default paths.
@@ -55,16 +56,20 @@ LAB_CONDA_PATH=$(realpath "bin/conda")
 
 # Load the configuration files.
 if [ -f /etc/labrc ]; then
-  source /etc/labrc # shellcheck disable=SC1091
+  # shellcheck disable=SC1091
+  source /etc/labrc
 fi
 if [ -f ~/.labrc ]; then
-  source ~/.labrc # shellcheck disable=SC1090
+  # shellcheck disable=SC1090
+  source ~/.labrc
 fi
 if [ -f "$LAB_PROJECT_PATH/.labrc" ]; then
-  source "$LAB_PROJECT_PATH/.labrc" # shellcheck disable=SC1091
+  # shellcheck disable=SC1091
+  source "$LAB_PROJECT_PATH/.labrc"
 fi
 if [ -f "$LAB_PROJECT_PATH/config/environments/$LAB_ENV.sh" ]; then
-  source "$LAB_PROJECT_PATH/config/environments/$LAB_ENV.sh" # shellcheck disable=SC1090
+  # shellcheck disable=SC1090
+  source "$LAB_PROJECT_PATH/config/environments/$LAB_ENV.sh"
 fi
 
 # Make sure all the configured paths exist.
