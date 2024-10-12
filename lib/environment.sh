@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Configure the runtime environment for jobs.
 #
 # Configuration can be set at multiple levels including the organization,
@@ -41,7 +43,7 @@ LAB_PROJECT_PATH=$(realpath ".")
 
 # Bootstrap the framework runtime environment.
 if [ -f "$LAB_PROJECT_PATH/config/pipeline.sh" ]; then
-  source "$LAB_PROJECT_PATH/config/pipeline.sh"
+  source "$LAB_PROJECT_PATH/config/pipeline.sh" # shellcheck disable=SC1091
 fi
 
 # Set all the default paths.
@@ -53,16 +55,16 @@ LAB_CONDA_PATH=$(realpath "bin/conda")
 
 # Load the configuration files.
 if [ -f /etc/labrc ]; then
-  source /etc/labrc
+  source /etc/labrc # shellcheck disable=SC1091
 fi
 if [ -f ~/.labrc ]; then
-  source ~/.labrc
+  source ~/.labrc # shellcheck disable=SC1090
 fi
 if [ -f "$LAB_PROJECT_PATH/.labrc" ]; then
-  source "$LAB_PROJECT_PATH/.labrc"
+  source "$LAB_PROJECT_PATH/.labrc" # shellcheck disable=SC1091
 fi
 if [ -f "$LAB_PROJECT_PATH/config/environments/$LAB_ENV.sh" ]; then
-  source "$LAB_PROJECT_PATH/config/environments/$LAB_ENV.sh"
+  source "$LAB_PROJECT_PATH/config/environments/$LAB_ENV.sh" # shellcheck disable=SC1090
 fi
 
 # Make sure all the configured paths exist.

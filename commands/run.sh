@@ -46,8 +46,8 @@ lab_run() {
   # In order to insert the framework functions into the job, the job
   # is broken up into 3 pieces and then put back together with the
   # framework functions right before the code.
-  slurm_shebang=$(head -n 1 $job_file | grep -E "^#!" )
-  slurm_header=$(grep "#SBATCH" $job_file)
+  slurm_shebang=$(head -n 1 "$job_file" | grep -E "^#!" )
+  slurm_header=$(grep "#SBATCH" "$job_file")
   slurm_code=$(grep -v -E "(^#\!)|(#SBATCH)" "$job_file")
 
   # Location where the lab framework was installed.
@@ -74,7 +74,7 @@ EOF
   # begin with <job name>-<date>-<time>-<username>. If the job is an array
   # job then the job array id and task id will be appended.
   log_full_path=$(realpath "$LAB_LOGS_PATH")
-  log_file_name="${job_name%.*}_"$(date "+%Y%m%d_%H%M%S")"_%u"
+  log_file_name="${job_name%.*}_$(date "+%Y%m%d_%H%M%S")_%u"
   if grep -q -E "^#SBATCH +--array=" "$job_file"; then
     log_file_name="$log_file_name-%A-%a"
   fi
@@ -85,7 +85,7 @@ EOF
     lab_run_dry_run
   else
     sbatch -D "$job_directory" \
-      --job-name="$LAB_PROJECT_NAME_${job_name%.*}" \
+      --job-name="$LAB_PROJECT_NAME\_${job_name%.*}" \
       --output "$log_full_path/$log_file_name.out" \
       --error "$log_full_path/$log_file_name.err" \
       <<EOF
