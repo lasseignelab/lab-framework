@@ -1,13 +1,13 @@
 #!/bin/bash
 
-new_description() {
+lab_new_description() {
   cat <<EOF
   Creates a new reproducible research project.
 EOF
 }
 
-new_help() {
-  new_description
+lab_new_help() {
+  lab_new_description
   echo
 
   cat <<EOF
@@ -61,8 +61,11 @@ new_help() {
 EOF
 }
 
-new() {
-  parse_commandline_parameters "$@"
+lab_new() {
+  echo "Here"
+  echo "$@"
+  lab_new_parse_commandline_parameters "$@"
+  echo "Here"
 
   # If the project directory exists then abort.
   if [ -d "$project_name" ]; then
@@ -71,8 +74,8 @@ new() {
   fi
 
   if [[ "$skip_git" != "true" && -n "$owner" ]]; then
-    verify_git_ssh_configuration
-    create_git_host_repository
+    lab_new_verify_git_ssh_configuration
+    lab_new_create_git_host_repository
   fi
 
   # Find the lab framework installion directory.
@@ -82,6 +85,7 @@ new() {
   echo
   git clone "$installed_directory"/project-template "$project_name"
   cd "$project_name" || echo "Error: Directory '$project_name' does not exist."
+
   if [ -d ".git" ]; then
     rm -rf .git
     if [[ "$skip_git" == "true" ]]; then
@@ -90,6 +94,7 @@ new() {
       rm logs/.gitignore
     else
       git init
+      lab_new_add_pipeline_config_file
       git add .
       git commit -m "Initial commit"
       git branch -m master main
@@ -105,7 +110,19 @@ new() {
   fi
 }
 
-create_git_host_repository() {
+lab_new_add_pipeline_config_file() {
+  temporary_file=$(mktemp)
+  random_seed="$RANDOM"
+
+  sed \
+    -e "s/{{project_name}}/${project_name}/g" \
+    -e "s/{{random_seed}}/${random_seed}/g" \
+    config/pipeline.sh > "$temporary_file"
+
+  mv "$temporary_file" config/pipeline.sh
+}
+
+lab_new_create_git_host_repository() {
   # Prompt the researcher to create a repository on their git host
   case "$git_host" in
     "github.com")
@@ -162,7 +179,8 @@ EOF
   fi
 }
 
-parse_commandline_parameters() {
+lab_new_parse_commandline_parameters() {
+  echo "Inside"
   # Define the named commandline options
 
   if ! OPTIONS=$(getopt -o o: --long owner:,git-host:,skip-git -- "$@"); then
@@ -204,7 +222,7 @@ parse_commandline_parameters() {
   project_name=$1
 }
 
-verify_git_ssh_configuration() {
+lab_new_verify_git_ssh_configuration() {
   # If Github SSH is not configured then abort.
   if ssh -T git@"$git_host" 2>&1 | grep -q 'Permission denied'; then
     case "$git_host" in

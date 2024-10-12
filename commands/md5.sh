@@ -1,13 +1,13 @@
 #!/bin/bash
 
-md5_description() {
+lab_md5_description() {
   cat <<EOF
   Calculates a combined MD5 checksum for one or more files.
 EOF
 }
 
-md5_help() {
-  md5_description
+lab_md5_help() {
+  lab_md5_description
   echo
 
   cat <<EOF
@@ -51,7 +51,7 @@ md5_help() {
 EOF
 }
 
-md5() {
+lab_md5() {
   # Define the named commandline options
   if ! OPTIONS=$(getopt -o no:s: --long dry-run,output:,slurm: -- "$@"); then
     echo "Use the 'lab help md5' command for detailed help."
@@ -133,7 +133,7 @@ EOF
         else
           # Compute checksums for all files
           echo -e '\nFiles included:'
-          checksums=$(md5_find "${@:1}")
+          checksums=$(lab_md5_find "${@:1}")
           echo "$checksums"
 
           # Compute single checksum based on the checksums of all files
@@ -151,14 +151,14 @@ EOF
 # Results are sorted by file path and name.
 #
 # Usage:
-# > md5_find FILE...
+# > lab_md5_find FILE...
 #
 # Example:
-# > md5_file ~/bin/lab-cli/commands
+# > lab_md5_file ~/bin/lab-cli/commands
 # 91845ed3e6ed80b6c93ffa4bc0587c42  bin/lab-cli/commands/md5dir.sh
 # d2760f02c9d55fb4bf78d9ed0b398c4d  bin/lab-cli/commands/md5.sh
 #
 ###############################################################################
-md5_find() {
+lab_md5_find() {
   find "${@:1}" -type f ! -path '*/\.*' -exec md5sum {} + | sort -k2,2
 }
